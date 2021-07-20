@@ -117,6 +117,9 @@ func expBackoff(interval time.Duration) time.Duration {
 	return interval
 }
 
+// getPeriodicAndSleep get the REBOOT_WINDOW_START, REBOOT_WINDOW_LENGTH
+// and check if everything is ok and the get then Periodic. Check if
+// it is outside of the reboot window and If yes then sleep.
 func getPeriodicAndSleep() {
 	var period *timeutil.Periodic
 
