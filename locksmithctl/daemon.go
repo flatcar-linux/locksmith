@@ -20,6 +20,7 @@ package main
 import "C"
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -130,7 +131,7 @@ func getPeriodicAndSleep() {
 	}
 
 	if (startw == "") != (lengthw == "") {
-		dlog.Fatal("Either both or neither $REBOOT_WINDOW_START and $REBOOT_WINDOW_LENGTH must be set")
+		return errors.New("Either both or neither $REBOOT_WINDOW_START and $REBOOT_WINDOW_LENGTH must be set")
 	}
 
 	if startw != "" && lengthw != "" {
