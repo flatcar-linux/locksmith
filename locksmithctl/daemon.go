@@ -120,7 +120,7 @@ func expBackoff(interval time.Duration) time.Duration {
 // getPeriodicAndSleep get the REBOOT_WINDOW_START, REBOOT_WINDOW_LENGTH
 // and check if everything is ok and the get then Periodic. Check if
 // it is outside of the reboot window and If yes then sleep.
-func getPeriodicAndSleep() (err error) {
+func getPeriodicAndSleep() error {
 	var period *timeutil.Periodic
 
 	startw := os.Getenv("LOCKSMITHD_REBOOT_WINDOW_START")
@@ -140,7 +140,7 @@ func getPeriodicAndSleep() (err error) {
 	if startw != "" && lengthw != "" {
 		p, err := timeutil.ParsePeriodic(startw, lengthw)
 		if err != nil {
-			dlog.Fatalf("Error parsing reboot window: %s", err)
+			return err
 		}
 
 		period = p
@@ -197,7 +197,9 @@ func (r rebooter) lockAndReboot(lck *lock.Lock) {
 
 			continue
 		}
-		getPeriodicAndSleep()
+		if err := getPeriodicAndSleep(); err != nil {
+			dlog.Fatalf("unable to check reboot window period: %v", err)
+		}
 
 		r.rebootAndSleep()
 		return
