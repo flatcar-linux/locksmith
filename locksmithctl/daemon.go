@@ -147,21 +147,19 @@ func getPeriodicAndSleep() error {
 	}
 
 	if period != nil {
-		dlog.Infof("Reboot window start is %q and length is %q", startw, lengthw)
-		next := period.Next(time.Now())
-		dlog.Infof("Next window begins at %s and ends at %s", next.Start, next.End)
+		now := time.Now()
+		sleeptime := period.DurationToStart(now)
+		if sleeptime > 0 {
+			dlog.Infof("Reboot window start is %q and length is %q", startw, lengthw)
+			next := period.Next(time.Now())
+			dlog.Infof("Next window begins at %s and ends at %s", next.Start, next.End)
+			dlog.Infof("Waiting for %s to reboot.", sleeptime)
+			time.Sleep(sleeptime)
+		}
 	} else {
 		dlog.Info("No configured reboot window")
 	}
 
-	if period != nil {
-		now := time.Now()
-		sleeptime := period.DurationToStart(now)
-		if sleeptime > 0 {
-			dlog.Infof("Waiting for %s to reboot.", sleeptime)
-			time.Sleep(sleeptime)
-		}
-	}
 	return nil
 }
 
